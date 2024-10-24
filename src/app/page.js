@@ -9,6 +9,8 @@ const page = () => {
     <>
       <nav>
         <button className='border p-3 rounded-2xl' onClick={() => { route.push("/signup") }}>Signup</button>
+
+        <button className='border p-3 rounded-2xl' onClick={() => { route.push("/dashboard") }}>Dashboard</button>
       </nav>
       <main></main>
     </>

@@ -2,7 +2,6 @@
 import React, { useRef, useState } from 'react'
 import Link from 'next/link'
 import axios from 'axios';
-import { hashSync } from 'bcryptjs';
 import { useRouter } from 'next/navigation';
 const page = () => {
     const route = useRouter()
@@ -21,12 +20,11 @@ const page = () => {
 
         const res = await axios.post('/api/checkUser', { email, password });
         console.log(res.data);
-
-        //    if(res.data.exists){
-        //        setuserExist(true);
-        //        route.push("/homePg");
-        //    } 
-        //    else setuserExist(false);
+           if(res.data.exists){
+               setuserExist(true);
+               route.push("/homePg");
+           } 
+           else setuserExist(false);
     }
     return (
         <main className='auth-section'>

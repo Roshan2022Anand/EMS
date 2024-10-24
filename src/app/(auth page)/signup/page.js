@@ -23,12 +23,11 @@ const page = () => {
         const res = await axios.post('/api/addNewUser', { email, password })
         console.log("hai");
         console.log(res.data);
-
-        // if (res.data.exists) setuserExist(true);
-        // else {
-        //     setuserExist(false);
-        //     route.push("/dashboard")
-        // }
+        if (res.data.exists) setuserExist(true);
+        else {
+            setuserExist(false);
+            route.push("/dashboard")
+        }
     }
     return (
         <main className='auth-section'>
