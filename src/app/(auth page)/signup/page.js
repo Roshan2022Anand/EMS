@@ -17,12 +17,18 @@ const page = () => {
         e.preventDefault()
         let email = emailRef.current.value;
         let password = hashSync(passwordRef.current.value, 10);
+
+        if (!email || !password) return;
+
         const res = await axios.post('/api/addNewUser', { email, password })
-        if (res.data.exists) setuserExist(true);
-        else {
-            setuserExist(false);
-            route.push("/dashboard")
-        }
+        console.log("hai");
+        console.log(res.data);
+
+        // if (res.data.exists) setuserExist(true);
+        // else {
+        //     setuserExist(false);
+        //     route.push("/dashboard")
+        // }
     }
     return (
         <main className='auth-section'>
