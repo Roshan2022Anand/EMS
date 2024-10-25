@@ -4,7 +4,10 @@ import Link from 'next/link'
 import axios from 'axios';
 import { hashSync } from 'bcryptjs';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { setEmailNId } from '@/redux/slices/userSlice';
 const page = () => {
+    const dispatch = useDispatch();
     const route = useRouter()
     //reference elements 
     const emailRef = useRef();
@@ -20,12 +23,12 @@ const page = () => {
 
         if (!email || !password) return;
 
-        const res = await axios.post('/api/addNewUser', { email, password })
-        console.log("hai");
-        console.log(res.data);
+        const res = await axios.post('/api/userOperations', { email, password })
+        const id = res.data.id;
         if (res.data.exists) setuserExist(true);
         else {
             setuserExist(false);
+            dispatch(setEmailNId(email, id));
             route.push("/dashboard")
         }
     }

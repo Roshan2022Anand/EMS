@@ -1,11 +1,20 @@
 "use client"
 import React, { useRef, useState } from 'react'
 import styles from "./dash.module.css"
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
+import { useSelector } from 'react-redux'
 const page = () => {
+  const route = useRouter();
+  const { email, id } = useSelector(state => state.user);
+  console.log(email);
+  console.log(id);
+
 
   //All state variables
   const [pageCount, setpageCount] = useState(1);
-
+  const [userProfile, setuserProfile] = useState();
+  const [imgFile, setimgFile] = useState()
   //All general reference elements
   const nameRef = useRef();
   const ageRef = useRef();
@@ -17,39 +26,96 @@ const page = () => {
   const companyNameRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
-  const companyAddressRef = useRef();
 
   //All employee reference elements
   const departmentRef = useRef();
   const roleRef = useRef();
 
+  //function to get all the data from the form
+  const getAllDataFromForm = () => {
+    return {
+      name: nameRef.current.value,
+      age: ageRef.current.value,
+      dob: dobRef.current.value,
+      phone: phoneRef.current.value,
+      empType: empTypeRef.current.value,
+      companyName: companyNameRef.current?.value,
+      companyPassword: passwordRef.current.value,
+      companyConfirmPassword: confirmPasswordRef.current.value,
+      department: departmentRef.current.value,
+      role: roleRef.current.value,
+    }
+  }
+
   //function to submit general details
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
     if (empTypeRef.current.value === "null") alert("Please select Employee Type")
     else setpageCount(2)
   }
 
   //function to submit manager details
-  const submitManagerForm = (e) => {
+  const submitManagerForm = async (e) => {
     e.preventDefault();
-    if (passwordRef !== confirmPasswordRef) {
+    const { name, age, dob, phone, empType, companyName, companyPassword, companyConfirmPassword, } = getAllDataFromForm();// line 27
+    if (companyPassword !== companyConfirmPassword) {
       alert("Passwords do not match")
       return
     }
+
+    //Api  to create a new company
+    const companyRes = await axios.post("/api/company", { companyName, companyPassword, id });
+    const companyId = companyRes.data.id;
+
+    //Api to update the managers details
+    const managerRes = await axios.put("/api/userOperations", { email, name, age, dob, phone, empType, companyId, imgFile });
+    console.log(managerRes.data);
+    route.push('/manager-home')
   }
 
   //function to submit employee details
-  const submitEmployeeForm = (e) => { }
+  const submitEmployeeForm = async (e) => {
+    e.preventDefault();
+    const { name, age, dob, phone, empType, companyName, companyPassword, department, role } = getAllDataFromForm();
+    if (department === "null" || role === "null") {
+      alert("Please select Department and Role")
+      return
+    }
+
+    //Api to chekck if the company exists
+    // const companyRes =
+    route.push('/employee-home')
+  }
+
+  //function to set the image
+  const setImage = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setimgFile(file);
+      setuserProfile(URL.createObjectURL(file));
+    }
+  }
+  console.log(userProfile);
+  console.log(imgFile);
+
 
   return (
     <main className={styles.main}>
       {/* from for general details */}
       {pageCount == 1 &&
         <form onSubmit={submitForm}>
+          <section className='h-1/4'>
+            <label htmlFor='profile' className=''>
+              <img src={userProfile} alt='Set Profile' className='border rounded-full h-full w-1/2 mx-auto text-center content-center object-center' />
+            </label>
+            <input type='file' id='profile' accept='image/*' onChange={setImage} className='hidden' />
+          </section>
           <input type="text" placeholder="Name" required ref={nameRef} />
           <input type="number" placeholder="Age" required ref={ageRef} />
-          <input type="date" placeholder="DOB" required ref={dobRef} />
+          <div>
+            <label htmlFor='dob'>DOB:</label>
+            <input type="date" id='dob' placeholder="DOB" required ref={dobRef} />
+          </div>
           <input type="number" placeholder="Phone Number" required ref={phoneRef} />
           <select name="empType" id="empType" ref={empTypeRef}>
             <option value="null">Select</option>
@@ -66,7 +132,6 @@ const page = () => {
           <input type='text' placeholder='Company Name' required ref={companyNameRef} />
           <input type='password' placeholder='Password' required ref={passwordRef} />
           <input type="password" placeholder='Confirm Password' required ref={confirmPasswordRef} />
-          <input type='text' placeholder='Company Address' required ref={companyAddressRef} />
           <button type="submit" className='border p-2'>Submit</button>
         </form>}
 
@@ -125,29 +190,4 @@ const page = () => {
 }
 
 export default page
-
-import mongoose from "mongoose";
-//   status: String,
-//   salaryPayout: [{
-//     amount: Number,
-//     date: Date,
-//   }],
-//   leaveList: [{
-//     type: String,
-//     startDate: Date,
-//     endDate: Date,
-//     status: String,
-//   }],
-// })
-
-//   empType: {
-//     type: String,
-//     enum: ["employee", "manager"],
-//   },
-//   dob: Date,
-//   pic: String,
-//   phNum: Number,
-//   employee: employeeSchema,
-// });
-
 

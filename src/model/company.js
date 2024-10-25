@@ -10,7 +10,6 @@ const companySchema = new mongoose.Schema({
         required: true,
         type: String,
     },
-    companyAddress: String,
     manager: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

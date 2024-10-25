@@ -17,7 +17,6 @@ const employeeSchema = new mongoose.Schema({
     }],
 })
 
-
 //generic schema for both employee and manager
 const UserSchema = new mongoose.Schema({
     email: {
@@ -42,7 +41,7 @@ const UserSchema = new mongoose.Schema({
     },
     dob: Date,
     pic: String,
-    phNum: Number,
+    phone: Number,
     employee: employeeSchema,
 });
 
