@@ -38,7 +38,8 @@ const page = () => {
             seteroorMsg(res.data.message);
         } else {
             setuserExist(false);
-            dispatch(setEmailNId({email, id}));
+            dispatch(setEmailNId({ email, id }));
+            localStorage.setItem('ems-email', email);
             route.push("/dashboard")
         }
     }

@@ -1,4 +1,4 @@
-import InitialUserDataFetching from "@/components/InitialUserDataFetching"
+import ManagerNav from "@/components/ManagerNav"
 
 export const metadata = {
     title: "EMS Dashboard",
@@ -8,9 +8,9 @@ export const metadata = {
 
 export default function MainLayout({ children }) {
     return (
-        <>
-            <InitialUserDataFetching />
+        <main className="flex h-full">
+            <ManagerNav />
             {children}
-        </>
+        </main>
     )
 }

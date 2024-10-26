@@ -3,7 +3,10 @@ import React, { useRef, useState } from 'react'
 import Link from 'next/link'
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { setCompanyId, setEmailNId } from '@/redux/slices/userSlice';
 const page = () => {
+    const dispatch = useDispatch();
     const route = useRouter()
     //reference elements 
     const emailRef = useRef();
@@ -21,9 +24,15 @@ const page = () => {
 
         const res = await axios.post('/api/checkUser', { email, password });
         console.log(res.data);
+        const { userExist } = res.data
         if (res.data.exists) {
+            console.log(userExist.empType);
+
             setuserExist(true);
-            route.push("/homePg");
+            dispatch(setEmailNId({ email, id: userExist._id }));
+            localStorage.setItem('ems-email', email);
+            dispatch(setCompanyId(userExist.company))
+            route.push(`/${userExist.empType}-home`);
         }
         else {
             setwarningMsg(res.data.message);

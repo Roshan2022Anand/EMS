@@ -10,7 +10,7 @@ export async function POST(req) {
 
         const { email, password } = await req.json();
         const User = await user.findOne({ email });
-        if (User) return NextResponse.json({ exists: true,message:"User already Exists, try to Login" }, { status: 200 });
+        if (User) return NextResponse.json({ exists: true, message: "User already Exists, try to Login" }, { status: 200 });
 
         const newUser = new user({ email, password });
         newUser.save();
@@ -43,7 +43,16 @@ export async function PUT(req) {
 //To get the user details
 export async function GET(req) {
     try {
+        await connectDB();
 
+        const { searchParams } = new URL(req.url);
+        const email = searchParams.get('email');
+
+        const currUser = await user.findOne({ email });
+
+        if (!currUser) return NextResponse.json({ message: "User not found" }, { status: 200 });
+
+        return NextResponse.json({ message: "get req got", currUser }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ message: "internal error" }, { status: 500 });
     }
