@@ -12,34 +12,45 @@ const page = () => {
     //reference elements 
     const emailRef = useRef();
     const passwordRef = useRef();
+    const confirmPasswordRef = useRef();
 
     //state variables
     const [userExist, setuserExist] = useState(false);
+    const [eroorMsg, seteroorMsg] = useState("")
+
 
     const signUpUser = async (e) => {
         e.preventDefault()
         let email = emailRef.current.value;
-        let password = hashSync(passwordRef.current.value, 10);
+        let password = passwordRef.current.value;
+        let confirmPassword = confirmPasswordRef.current.value;
 
-        if (!email || !password) return;
+        if (password !== confirmPassword) {
+            setuserExist(true);
+            seteroorMsg("Password and confirm password should be same")
+            return;
+        }
 
-        const res = await axios.post('/api/userOperations', { email, password })
+        const res = await axios.post('/api/userOperations', { email, password: hashSync(passwordRef.current.value, 10) })
         const id = res.data.id;
-        if (res.data.exists) setuserExist(true);
-        else {
+        if (res.data.exists) {
+            setuserExist(true);
+            seteroorMsg(res.data.message);
+        } else {
             setuserExist(false);
-            dispatch(setEmailNId(email, id));
+            dispatch(setEmailNId({email, id}));
             route.push("/dashboard")
         }
     }
     return (
         <main className='auth-section'>
             <h1>Signup to EMS</h1>
-            <form className='flex flex-col'>
-                <input type='email' placeholder='Email' ref={emailRef} />
-                <input type='password' placeholder='Password' ref={passwordRef} />
-                <button type='submit' onClick={signUpUser}>Signup</button>
-                {userExist && <p className='text-red-600'>User already exist</p>}
+            <form className='flex flex-col' onSubmit={signUpUser}>
+                <input type='email' placeholder='Email' ref={emailRef} required />
+                <input type='password' placeholder='Password' ref={passwordRef} required />
+                <input type='password' placeholder='Confirm Password' ref={confirmPasswordRef} required />
+                <button type='submit'>Signup</button>
+                {userExist && <p className='text-red-600'>{eroorMsg}</p>}
             </form>
             <p>Account already exist ? <Link href="/login">Login</Link></p>
         </main>

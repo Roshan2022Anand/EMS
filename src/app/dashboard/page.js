@@ -3,18 +3,16 @@ import React, { useRef, useState } from 'react'
 import styles from "./dash.module.css"
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setCompanyId } from '@/redux/slices/userSlice'
 const page = () => {
   const route = useRouter();
+  const dispatch = useDispatch();
   const { email, id } = useSelector(state => state.user);
-  console.log(email);
-  console.log(id);
-
 
   //All state variables
   const [pageCount, setpageCount] = useState(1);
   const [userProfile, setuserProfile] = useState();
-  const [imgFile, setimgFile] = useState()
   //All general reference elements
   const nameRef = useRef();
   const ageRef = useRef();
@@ -41,9 +39,9 @@ const page = () => {
       empType: empTypeRef.current.value,
       companyName: companyNameRef.current?.value,
       companyPassword: passwordRef.current.value,
-      companyConfirmPassword: confirmPasswordRef.current.value,
-      department: departmentRef.current.value,
-      role: roleRef.current.value,
+      companyConfirmPassword: confirmPasswordRef?.current.value,
+      department: departmentRef.current?.value,
+      role: roleRef.current?.value,
     }
   }
 
@@ -66,9 +64,10 @@ const page = () => {
     //Api  to create a new company
     const companyRes = await axios.post("/api/company", { companyName, companyPassword, id });
     const companyId = companyRes.data.id;
+    dispatch(setCompanyId(companyId));
 
     //Api to update the managers details
-    const managerRes = await axios.put("/api/userOperations", { email, name, age, dob, phone, empType, companyId, imgFile });
+    const managerRes = await axios.put("/api/userOperations", { email, name, age, dob, phone, empType, companyId, userProfile });
     console.log(managerRes.data);
     route.push('/manager-home')
   }
@@ -83,7 +82,21 @@ const page = () => {
     }
 
     //Api to chekck if the company exists
-    // const companyRes =
+    const companyRes = await axios.get('/api/company', { params: { companyName, companyPassword } });
+    if (!companyRes.data.exists) {
+      alert(companyRes.data.message);
+      return
+    }
+    const companyId = companyRes.data.id;
+    dispatch(setCompanyId(companyId));
+
+    //Api to update the company details
+    const companyUpdateRes = await axios.put("/api/company", { companyId, id });
+    console.log(companyUpdateRes.data);
+
+    //Api to update the employee details
+    const employeeRes = await axios.put("/api/userOperations", { email, name, age, dob, phone, empType, companyId, department, role, userProfile });
+    console.log(employeeRes.data);
     route.push('/employee-home')
   }
 
@@ -91,19 +104,29 @@ const page = () => {
   const setImage = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setimgFile(file);
-      setuserProfile(URL.createObjectURL(file));
+      const render = new FileReader();
+      render.onloadend = () => {
+        setuserProfile(render.result);
+      };
+      render.readAsDataURL(file);
     }
   }
-  console.log(userProfile);
-  console.log(imgFile);
 
+
+  // const getImg = () => {
+  //   const base64Img = localStorage.getItem('profile');
+  //   if (base64Img) setmyUrl(base64Img)
+  // }
+  if (nameRef.current)
+    console.log(nameRef.current.value);
 
   return (
     <main className={styles.main}>
       {/* from for general details */}
-      {pageCount == 1 &&
-        <form onSubmit={submitForm}>
+      {/* {pageCount == 1 && */}
+        <form onSubmit={submitForm} style={{
+          display:(pageCount == 1) ? 'flex' : 'none'
+        }}>
           <section className='h-1/4'>
             <label htmlFor='profile' className=''>
               <img src={userProfile} alt='Set Profile' className='border rounded-full h-full w-1/2 mx-auto text-center content-center object-center' />
@@ -123,7 +146,7 @@ const page = () => {
             <option value="manager">Manager</option>
           </select>
           <button type="submit" className='border p-2'>Submit</button>
-        </form>}
+        </form>
 
       {/* form for manager */}
       {(pageCount == 2 && empTypeRef.current.value === "manager") &&

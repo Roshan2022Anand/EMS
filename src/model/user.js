@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 //specific for employee schema
 const employeeSchema = new mongoose.Schema({
     role: String,
-    Department: String,
+    department: String,
     status: String,
     salaryPayout: [{
         amount: Number,

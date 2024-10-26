@@ -1,4 +1,5 @@
 import connectDB from "@/lib/connectDB";
+import company from "@/model/company";
 import user from "@/model/user";
 import { NextResponse } from "next/server";
 
@@ -8,10 +9,8 @@ export async function POST(req) {
         await connectDB();
 
         const { email, password } = await req.json();
-        console.log(email, password);
         const User = await user.findOne({ email });
-        if (User)
-            return NextResponse.json({ exists: true }, { status: 200 });
+        if (User) return NextResponse.json({ exists: true,message:"User already Exists, try to Login" }, { status: 200 });
 
         const newUser = new user({ email, password });
         newUser.save();
@@ -27,9 +26,13 @@ export async function PUT(req) {
     try {
         await connectDB();
 
-        const { email, name, age, dob, phone, empType, companyId, imgFile } = await req.json();
+        const { email, name, age, dob, phone, empType, companyId, department, role, userProfile } = await req.json();
 
-        await user.findOneAndUpdate({ email }, { name, age, dob, phone, empType, company: companyId, pic: JSON.stringify(imgFile) });
+        const updatedData = {
+            name, age, dob, phone, empType, company: companyId, pic: userProfile
+        }
+        if (role && department) updatedData.employee = { role, department }
+        await user.findOneAndUpdate({ email }, updatedData);
         return NextResponse.json({ message: "updated" }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ message: "internal error" }, { status: 500 });

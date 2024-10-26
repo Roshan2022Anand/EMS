@@ -2,7 +2,9 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+  <mian>
+    <h1>Manager Home</h1>
+  </mian>
   )
 }
 

@@ -11,6 +11,7 @@ const page = () => {
 
     //state variables
     const [userExist, setuserExist] = useState(true);
+    const [warningMsg, setwarningMsg] = useState("")
 
     const loginUser = async (e) => {
         e.preventDefault()
@@ -20,20 +21,23 @@ const page = () => {
 
         const res = await axios.post('/api/checkUser', { email, password });
         console.log(res.data);
-           if(res.data.exists){
-               setuserExist(true);
-               route.push("/homePg");
-           } 
-           else setuserExist(false);
+        if (res.data.exists) {
+            setuserExist(true);
+            route.push("/homePg");
+        }
+        else {
+            setwarningMsg(res.data.message);
+            setuserExist(false);
+        }
     }
     return (
         <main className='auth-section'>
             <h1>Login to EMS</h1>
-            <form className='flex flex-col'>
+            <form className='flex flex-col' onSubmit={loginUser}>
                 <input type='email' placeholder='Email' ref={emailRef} required />
                 <input type='password' placeholder='Password' ref={passwordRef} required />
-                <button type='submit' onClick={loginUser}>Login</button>
-                {!userExist && <p className='text-red-600'>Account not found</p>}
+                {!userExist && <p className='text-red-600'>{warningMsg}</p>}
+                <button type='submit'>Login</button>
             </form>
             <p>New to EMS? <Link href="/signup">Signup</Link></p>
         </main>
