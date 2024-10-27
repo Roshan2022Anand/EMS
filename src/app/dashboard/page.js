@@ -5,6 +5,7 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCompanyId } from '@/redux/slices/userSlice'
+import { hashSync } from 'bcryptjs'
 const page = () => {
   const route = useRouter();
   const dispatch = useDispatch();
@@ -13,6 +14,7 @@ const page = () => {
   //All state variables
   const [pageCount, setpageCount] = useState(1);
   const [userProfile, setuserProfile] = useState();
+  const [warnMsg, setwarnMsg] = useState("")
   //All general reference elements
   const nameRef = useRef();
   const ageRef = useRef();
@@ -39,11 +41,12 @@ const page = () => {
       empType: empTypeRef.current.value,
       companyName: companyNameRef.current?.value,
       companyPassword: passwordRef.current.value,
-      companyConfirmPassword: confirmPasswordRef?.current.value,
+      companyConfirmPassword: confirmPasswordRef.current?.value,
       department: departmentRef.current?.value,
       role: roleRef.current?.value,
     }
   }
+  // http://localhost:3000/api/company?companyName=qqwe&companyPassword=12
 
   //function to submit general details
   const submitForm = async (e) => {
@@ -57,19 +60,19 @@ const page = () => {
     e.preventDefault();
     const { name, age, dob, phone, empType, companyName, companyPassword, companyConfirmPassword, } = getAllDataFromForm();// line 27
     if (companyPassword !== companyConfirmPassword) {
-      alert("Passwords do not match")
+      setwarnMsg("Passwords do not match")
       return
     }
 
     //Api  to create a new company
-    const companyRes = await axios.post("/api/company", { companyName, companyPassword, id });
+    const companyRes = await axios.post("/api/company", { companyName, companyPassword: hashSync(companyPassword, 10), id });
     const companyId = companyRes.data.id;
     dispatch(setCompanyId(companyId));
 
     //Api to update the managers details
     const managerRes = await axios.put("/api/userOperations", { email, name, age, dob, phone, empType, companyId, userProfile });
     console.log(managerRes.data);
-    route.push('/manager-home')
+    route.push('/manager/home')
   }
 
   //function to submit employee details
@@ -77,14 +80,14 @@ const page = () => {
     e.preventDefault();
     const { name, age, dob, phone, empType, companyName, companyPassword, department, role } = getAllDataFromForm();
     if (department === "null" || role === "null") {
-      alert("Please select Department and Role")
+      setwarnMsg("Please select Department and Role")
       return
     }
 
     //Api to chekck if the company exists
     const companyRes = await axios.get('/api/company', { params: { companyName, companyPassword } });
     if (!companyRes.data.exists) {
-      alert(companyRes.data.message);
+      setwarnMsg(companyRes.data.message);
       return
     }
     const companyId = companyRes.data.id;
@@ -97,7 +100,7 @@ const page = () => {
     //Api to update the employee details
     const employeeRes = await axios.put("/api/userOperations", { email, name, age, dob, phone, empType, companyId, department, role, userProfile });
     console.log(employeeRes.data);
-    route.push('/employee-home')
+    route.push('/employee/home')
   }
 
   //function to set the image
@@ -117,36 +120,32 @@ const page = () => {
   //   const base64Img = localStorage.getItem('profile');
   //   if (base64Img) setmyUrl(base64Img)
   // }
-  if (nameRef.current)
-    console.log(nameRef.current.value);
-
   return (
     <main className={styles.main}>
       {/* from for general details */}
-      {/* {pageCount == 1 && */}
-        <form onSubmit={submitForm} style={{
-          display:(pageCount == 1) ? 'flex' : 'none'
-        }}>
-          <section className='h-1/4'>
-            <label htmlFor='profile' className=''>
-              <img src={userProfile} alt='Set Profile' className='border rounded-full h-full w-1/2 mx-auto text-center content-center object-center' />
-            </label>
-            <input type='file' id='profile' accept='image/*' onChange={setImage} className='hidden' />
-          </section>
-          <input type="text" placeholder="Name" required ref={nameRef} />
-          <input type="number" placeholder="Age" required ref={ageRef} />
-          <div>
-            <label htmlFor='dob'>DOB:</label>
-            <input type="date" id='dob' placeholder="DOB" required ref={dobRef} />
-          </div>
-          <input type="number" placeholder="Phone Number" required ref={phoneRef} />
-          <select name="empType" id="empType" ref={empTypeRef}>
-            <option value="null">Select</option>
-            <option value="employee">Employee</option>
-            <option value="manager">Manager</option>
-          </select>
-          <button type="submit" className='border p-2'>Submit</button>
-        </form>
+      <form onSubmit={submitForm} style={{
+        display: (pageCount == 1) ? 'flex' : 'none'
+      }}>
+        <section className='h-1/4'>
+          <label htmlFor='profile' className=''>
+            <img src={userProfile} alt='Set Profile' className='border rounded-full h-full w-1/2 mx-auto text-center content-center object-center' />
+          </label>
+          <input type='file' id='profile' accept='image/*' onChange={setImage} className='hidden' />
+        </section>
+        <input type="text" placeholder="Name" required ref={nameRef} />
+        <input type="number" placeholder="Age" required ref={ageRef} />
+        <div>
+          <label htmlFor='dob'>DOB:</label>
+          <input type="date" id='dob' placeholder="DOB" required ref={dobRef} />
+        </div>
+        <input type="number" placeholder="Phone Number" required ref={phoneRef} />
+        <select name="empType" id="empType" ref={empTypeRef}>
+          <option value="null">Select</option>
+          <option value="employee">Employee</option>
+          <option value="manager">Manager</option>
+        </select>
+        <button type="submit" className='border p-2'>Submit</button>
+      </form>
 
       {/* form for manager */}
       {(pageCount == 2 && empTypeRef.current.value === "manager") &&
@@ -155,6 +154,9 @@ const page = () => {
           <input type='text' placeholder='Company Name' required ref={companyNameRef} />
           <input type='password' placeholder='Password' required ref={passwordRef} />
           <input type="password" placeholder='Confirm Password' required ref={confirmPasswordRef} />
+
+          {warnMsg && <p className='text-red-600 font-bold'>{warnMsg}</p>}
+
           <button type="submit" className='border p-2'>Submit</button>
         </form>}
 
@@ -166,6 +168,8 @@ const page = () => {
           <input type='text' placeholder='Company Name' required ref={companyNameRef} />
           <input type='password' placeholder='Password' required ref={passwordRef} />
 
+          {warnMsg && <p className='text-red-600 font-bold'>{warnMsg}</p>}
+          
           {/* options for the department */}
           <select name="department" id="department" ref={departmentRef}>
             <option value="null">Select Department</option>
@@ -183,6 +187,7 @@ const page = () => {
             <option value="design">Design</option>
             <option value="quality_assurance">Quality Assurance</option>
           </select>
+
 
           {/* options for the role */}
           <select name="role" id="role" ref={roleRef}>

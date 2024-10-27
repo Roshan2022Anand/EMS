@@ -32,7 +32,7 @@ const page = () => {
             dispatch(setEmailNId({ email, id: userExist._id }));
             localStorage.setItem('ems-email', email);
             dispatch(setCompanyId(userExist.company))
-            route.push(`/${userExist.empType}-home`);
+            route.push(`/${userExist.empType}/home`);
         }
         else {
             setwarningMsg(res.data.message);

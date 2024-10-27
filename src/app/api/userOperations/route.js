@@ -1,5 +1,4 @@
 import connectDB from "@/lib/connectDB";
-import company from "@/model/company";
 import user from "@/model/user";
 import { NextResponse } from "next/server";
 
