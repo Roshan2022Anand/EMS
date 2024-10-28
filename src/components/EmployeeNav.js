@@ -1,9 +1,10 @@
+"use client"
 import React from 'react'
 import { useSelector } from 'react-redux'
 
 const EmployeeNav = () => {
-  const { userDetails } = useSelector(state => state.user);
-  
+  const { navItme } = useSelector(state => state.nav);
+
   return (
     <div>EmployeeNav</div>
   )

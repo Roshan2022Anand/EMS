@@ -3,11 +3,8 @@ import axios from "axios";
 
 
 export const fetchUserData = createAsyncThunk('fetchUserData', async () => {
-    console.log(localStorage.getItem('ems-email') + "from fetchUserData");
-    
     const userRes = await axios.get('/api/userOperations', { params: { email: localStorage.getItem('ems-email') } })
-    console.log(userRes.data);
-    return userRes.data;
+    return userRes.data.currUser;
 })
 
 export const userSlice = createSlice({
@@ -15,7 +12,6 @@ export const userSlice = createSlice({
     initialState: {
         email: null,
         id: null,
-        companyId: null,
         userDetails: null
     },
     reducers: {

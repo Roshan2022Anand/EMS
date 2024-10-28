@@ -1,4 +1,4 @@
-import ManagerNav from "@/components/ManagerNav"
+import EmployeeNav from "@/components/EmployeeNav";
 import InitialFetch from "@/components/initialFetch";
 export const metadata = {
   title: "Employee management",
@@ -9,7 +9,7 @@ export default function managerHome({ children }) {
   return (
     <main className="flex h-full">
       <InitialFetch />
-      <ManagerNav />
+      <EmployeeNav/>
       {children}
     </main>
   )

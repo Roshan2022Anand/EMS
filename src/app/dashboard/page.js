@@ -67,7 +67,6 @@ const page = () => {
     //Api  to create a new company
     const companyRes = await axios.post("/api/company", { companyName, companyPassword: hashSync(companyPassword, 10), id });
     const companyId = companyRes.data.id;
-    dispatch(setCompanyId(companyId));
 
     //Api to update the managers details
     const managerRes = await axios.put("/api/userOperations", { email, name, age, dob, phone, empType, companyId, userProfile });
@@ -85,13 +84,12 @@ const page = () => {
     }
 
     //Api to chekck if the company exists
-    const companyRes = await axios.get('/api/company', { params: { companyName, companyPassword } });
+    const companyRes = await axios.get('/api/checkCompany', { params: { companyName, companyPassword } });
     if (!companyRes.data.exists) {
       setwarnMsg(companyRes.data.message);
       return
     }
     const companyId = companyRes.data.id;
-    dispatch(setCompanyId(companyId));
 
     //Api to update the company details
     const companyUpdateRes = await axios.put("/api/company", { companyId, id });
