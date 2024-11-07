@@ -8,5 +8,5 @@ export const store = configureStore({
         user: userReducer,
         nav: navReducer,
         company: companyReducer
-    }
+    },
 })

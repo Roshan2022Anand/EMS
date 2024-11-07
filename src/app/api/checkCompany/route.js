@@ -1,5 +1,6 @@
 import connectDB from "@/lib/connectDB";
 import company from "@/model/company";
+import { compareSync } from "bcryptjs";
 import { NextResponse } from "next/server";
 
 //To get the company details

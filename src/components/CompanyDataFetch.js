@@ -7,18 +7,12 @@ import { useDispatch, useSelector } from 'react-redux'
 const CompanyDataFetch = () => {
   const dispatch = useDispatch();
   const { userDetails } = useSelector(state => state.user);
-  console.log(userDetails);
-
   
   useEffect(() => {
-    if (userDetails) {
-      dispatch(fetchCompanyData(userDetails.company))
-    }
+    if (userDetails) dispatch(fetchCompanyData(userDetails.company))
   }, [userDetails])
 
-
-
-  return null
+  return null     
 }
 
 export default CompanyDataFetch

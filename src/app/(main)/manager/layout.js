@@ -7,12 +7,13 @@ export const metadata = {
 };
 
 export default function managerHome({ children }) {
-    return (
-        <main className="flex h-full">
-            <CompanyDataFetch />
-            <InitialFetch />
+    return (<>
+        <CompanyDataFetch />
+        <InitialFetch />
+        <main className="h-full w-full flex">
             <ManagerNav />
             {children}
         </main>
+    </>
     )
 }

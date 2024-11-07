@@ -1,0 +1,43 @@
+/* --color-primary: #1F1F1F; */
+/* Used for main backgrounds */
+/* --color-secondary: #3A4A5C; */
+/* Used for containers, cards */
+/* --color-accent: #1ABC9C; */
+/* Used for highlights, buttons */
+
+
+.tableContainer {
+    width: 100%;
+    text-align: center;
+
+    &>* {
+        width: 100%;
+        display: flex;
+    }
+
+    &>header {
+        padding: 5px 0;
+        background-color: var(--color-secondary);
+    }
+
+    & nav {
+        width: 40%;
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    & img {
+        margin: 0 auto;
+        width: 50%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+}
+
+
+.tableContainer button {
+    padding: 2px 5px;
+    border-radius: 10px;
+    width: fit-content;
+    background-color: var(--color-accent);
+}
