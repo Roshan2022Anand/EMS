@@ -10,6 +10,7 @@ export const fetchCompanyData = createAsyncThunk('fetchCompanyData', async (id) 
     return { company, employees: empRes.data.allEmp }
 })
 
+// Update all employees data
 export const updateAllEmpData = createAsyncThunk("updateAllEmpData", async (_, { getState }) => {
     const state = getState();
     const { updatedEmp } = state.company;
@@ -22,6 +23,7 @@ const companySlice = createSlice({
     name: 'company',
     initialState: {
         companyData: null,
+        departments:[],
         allEmployees: [],
         updatedEmp: [],
     },

@@ -1,5 +1,5 @@
-import EmployeeNav from "@/components/EmployeeNav";
-import InitialFetch from "@/components/initialFetch";
+import InitialFetch from "@/components/InitialFetch";
+import EmployeeNav from "@/components/navbars/EmployeeNav";
 export const metadata = {
   title: "Employee management",
   description: "This is the landing page for the employee management system",

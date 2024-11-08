@@ -15,7 +15,7 @@ const page = () => {
   useEffect(() => {
     dispatch(setNav('employees-nav'))
   }, [dispatch])
- 
+
   const { userDetails } = useSelector(state => state.user)
   const { allEmployees } = useSelector(state => state.company)
 
@@ -29,6 +29,20 @@ const page = () => {
   const [basicDetails, setbasicDetails] = useState(null);
   const [salaryNLeave, setsalaryNLeave] = useState(null);
   const [editSection, seteditSection] = useState(null);
+
+  //function to close other dialog boxes
+  const closeOtherDialog = (num) => {
+    if (num === 1) {
+      setsalaryNLeave(null);
+      seteditSection(null);
+    } else if (num === 2) {
+      setsalaryNLeave(null);
+      setbasicDetails(null);
+    } else {
+      seteditSection(null);
+      setbasicDetails(null);
+    }
+  }
 
   if (!userDetails || !allEmployees) return <Loader />
 
@@ -58,9 +72,9 @@ const page = () => {
             <p className='w-[12%]'>{emp.employee.department}</p>
             <p className='w-[16%]'>{emp.employee.role}</p>
             <nav>
-              <button onClick={() => { setbasicDetails(<ViewEmp emp={emp} setbasicDetails={setbasicDetails}/>) }}>View</button>
-              <button onClick={() => { seteditSection(<EditEmp index={i} seteditSection={seteditSection}/>) }}>Edit</button>
-              <button onClick={() => { setsalaryNLeave(<Salary index={i} setsalaryNLeave={setsalaryNLeave}/>) }}>Salary & leave</button>
+              <button onClick={() => { setbasicDetails(<ViewEmp emp={emp} setbasicDetails={setbasicDetails} />); closeOtherDialog(1) }}>View</button>
+              <button onClick={() => { seteditSection(<EditEmp index={i} seteditSection={seteditSection} />); closeOtherDialog(2) }}>Edit</button>
+              <button onClick={() => { setsalaryNLeave(<Salary index={i} setsalaryNLeave={setsalaryNLeave} />); closeOtherDialog(3) }}>Salary & leave</button>
             </nav>
           </section>
         ))}

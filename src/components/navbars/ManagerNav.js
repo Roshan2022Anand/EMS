@@ -41,8 +41,8 @@ const ManagerNav = () => {
                 <button className='absolute top-1 right-1 lg:hidden' onClick={() => { setnavState(false) }}><ArrowBigLeft /></button>
                 <button id='home-nav'><Link href='/manager/home'>Home</Link></button>
                 <button id='employees-nav'><Link href='/manager/employees'>Employees</Link></button>
-                <button id='department-nav'><Link href='/manager/departments'>Departments</Link></button>
-                <button id='leaves-nav'><Link href='/manager/Leaves'>Leaves</Link></button>
+                <button id='department-nav'><Link href='/manager/department'>Departments</Link></button>
+                <button id='leaves-nav'><Link href='/manager/leave'>Leaves</Link></button>
                 <button id='setting-nav'><Link href='/manager/setting'>setting</Link></button>
             </section>
         </>

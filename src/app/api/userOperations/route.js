@@ -20,7 +20,7 @@ export async function POST(req) {
     }
 }
 
-//To update the user details
+//To add new data to the user object
 export async function PUT(req) {
     try {
         await connectDB();
@@ -36,7 +36,23 @@ export async function PUT(req) {
     } catch (error) {
         return NextResponse.json({ message: "internal error" }, { status: 500 });
     }
+}
 
+//to update the user details
+export async function PATCH(req) {
+    try {
+        await connectDB();
+
+        const { userDetails } = await req.json();
+        if (!userDetails) return NextResponse.json({ message: "No data to update" }, { status: 200 });
+
+        const savedData = await user.findByIdAndUpdate(userDetails._id, userDetails, { new: true });
+
+        if (savedData) return NextResponse.json({ message: "updated" }, { status: 200 });
+        return NextResponse.json({ message: "User not found" }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ message: "internal error" }, { status: 500 });
+    }
 }
 
 //To get the user details
