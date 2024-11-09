@@ -8,13 +8,12 @@ export const fetchUserData = createAsyncThunk('fetchUserData', async () => {
 })
 
 //update user data
-export const updateUserData = createAsyncThunk('updateUserData', async (_, getState) => {
+export const updateUserData = createAsyncThunk('updateUserData', async (_, {getState}) => {
     const state = getState()
     let { userDetails, updated } = state.user;
     console.log(userDetails, updated);
-    
     if (!updated) return;
-    const res = await axios.patch('/api/userOperations', userDetails);
+    const res = await axios.patch('/api/userOperations',{ userDetails});
     console.log(res.data);
     updated = false;
 })

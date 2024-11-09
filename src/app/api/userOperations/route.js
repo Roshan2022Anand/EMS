@@ -44,6 +44,8 @@ export async function PATCH(req) {
         await connectDB();
 
         const { userDetails } = await req.json();
+        console.log(userDetails);
+        
         if (!userDetails) return NextResponse.json({ message: "No data to update" }, { status: 200 });
 
         const savedData = await user.findByIdAndUpdate(userDetails._id, userDetails, { new: true });
